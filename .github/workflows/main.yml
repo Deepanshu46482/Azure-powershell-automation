@@ -1,13 +1,28 @@
 name: PowerShell VM Deploy
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
-      - name: Install PowerShell
-        uses: PowerShell/PowerShell@v1.2.0
-      - name: Run PowerShell Script
-        run: pwsh ./create-vm.ps1
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Setup PowerShell
+      uses: actions/setup-powershell@v2
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Install Az module
+      run: pwsh -c "Install-Module -Name Az -AllowClobber -Scope CurrentUser -Force"
+
+    - name: Run PowerShell script
+      run: pwsh ./create-vm.ps1
