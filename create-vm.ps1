@@ -1,19 +1,23 @@
+# Define variables
 $resourceGroup = "MyResourceGroup"
 $location = "EastUS"
 $vmName = "MyVM"
 
+# Create resource group
 New-AzResourceGroup -Name $resourceGroup -Location $location
 
-$cred = Get-Credential
+# Define credentials (replace with GitHub Secret in production)
+$securePassword = ConvertTo-SecureString "YourPassword123!" -AsPlainText -Force
+$cred = New-Object System.Management.Automation.PSCredential ("azureuser", $securePassword)
 
+# Create VM
 New-AzVM `
-  -ResourceGroupName $resourceGroup `
-  -Name $vmName `
-  -Location $location `
-  -VirtualNetworkName "$vmName-Vnet" `
-  -SubnetName "$vmName-Subnet" `
-  -SecurityGroupName "$vmName-nsg" `
-  -PublicIpAddressName "$vmName-ip" `
-  -Credential $cred `
-  -ImageName "Canonical:0001-com-ubuntu-server-jammy:22_04-lts:latest" `
-  -Size "Standard_B2s"
+    -ResourceGroupName $resourceGroup `
+    -Name $vmName `
+    -Location $location `
+    -VirtualNetworkName "$vmName-Vnet" `
+    -SubnetName "$vmName-Subnet" `
+    -SecurityGroupName "$vmName-nsg" `
+    -PublicIpAddressName "$vmName-ip" `
+    -Credential $cred
+
