@@ -1,0 +1,13 @@
+name: PowerShell VM Deploy
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install PowerShell
+        uses: PowerShell/PowerShell@v1.2.0
+      - name: Run PowerShell Script
+        run: pwsh ./create-vm.ps1
