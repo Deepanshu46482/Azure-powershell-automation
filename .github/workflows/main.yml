@@ -13,16 +13,24 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v3
 
-    - name: Azure Login
+    - name: Azure Login (for az CLI use)
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: Install Az module
+    - name: Install Az PowerShell Module
       shell: pwsh
       run: |
         Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
         Install-Module -Name Az -AllowClobber -Scope CurrentUser -Force
+
+    - name: Connect to Azure using PowerShell
+      shell: pwsh
+      run: |
+        $creds = ConvertFrom-Json '${{ secrets.AZURE_CREDENTIALS }}'
+        $securePassword = ConvertTo-SecureString $creds.clientSecret -AsPlainText -Force
+        $psCredential = New-Object System.Management.Automation.PSCredential ($creds.clientId, $securePassword)
+        Connect-AzAccount -ServicePrincipal -Credential $psCredential -TenantId $creds.tenantId -SubscriptionId $creds.subscriptionId
 
     - name: Run PowerShell script
       shell: pwsh
