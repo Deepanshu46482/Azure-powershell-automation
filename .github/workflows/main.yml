@@ -13,7 +13,7 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v3
 
-    - name: Setup PowerShell
+    - name: Set up PowerShell
       uses: actions/setup-powershell@v2
 
     - name: Azure Login
@@ -22,7 +22,9 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Install Az module
-      run: pwsh -c "Install-Module -Name Az -AllowClobber -Scope CurrentUser -Force"
+      shell: pwsh
+      run: Install-Module -Name Az -AllowClobber -Scope CurrentUser -Force
 
-    - name: Run PowerShell script
-      run: pwsh ./create-vm.ps1
+    - name: Run PowerShell Script
+      shell: pwsh
+      run: ./create-vm.ps1
